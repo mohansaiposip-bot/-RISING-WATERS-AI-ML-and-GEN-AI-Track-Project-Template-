@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rising Waters — Flood Early-Warning System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="scanlines" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M4 26 Q10 20 16 26 T28 26 T40 26" stroke="var(--cyan)" stroke-width="2.5" fill="none"/>
+      <path d="M4 32 Q10 26 16 32 T28 32 T40 32" stroke="var(--teal)" stroke-width="2.5" fill="none" opacity="0.7"/>
+      <path d="M20 4 L20 18 M14 12 L20 18 L26 12" stroke="var(--amber)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <h1>Rising Waters</h1>
+      <p class="tagline">Flood early-warning &amp; risk classification system</p>
+    </div>
+  </div>
+  <div class="model-chip">
+    <span class="dot" id="statusDot"></span>
+    <span>Model online — <strong>{{ model_name }}</strong></span>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- INPUT PANEL -->
+  <section class="panel input-panel" aria-labelledby="inputHeading">
+    <div class="panel-head">
+      <span class="eyebrow">Field readings</span>
+      <h2 id="inputHeading">Enter station data</h2>
+    </div>
+
+    <label class="field">
+      <span class="field-label">Region / district</span>
+      <input type="text" id="region" placeholder="e.g. Kurnool" value="Kurnool">
+    </label>
+
+    <div class="slider-grid">
+      <div class="field slider-field">
+        <span class="field-label">Annual rainfall <em>(mm)</em></span>
+        <input type="range" id="annual_rainfall_mm" min="300" max="4200" step="10" value="1800">
+        <output class="readout" id="out_annual_rainfall_mm">1800 mm</output>
+      </div>
+
+      <div class="field slider-field">
+        <span class="field-label">Seasonal (monsoon) rainfall <em>(mm)</em></span>
+        <input type="range" id="seasonal_rainfall_mm" min="100" max="3600" step="10" value="1200">
+        <output class="readout" id="out_seasonal_rainfall_mm">1200 mm</output>
+      </div>
+
+      <div class="field slider-field">
+        <span class="field-label">Cloud visibility <em>(km)</em></span>
+        <input type="range" id="cloud_visibility_km" min="0.3" max="10" step="0.1" value="6">
+        <output class="readout" id="out_cloud_visibility_km">6.0 km</output>
+      </div>
+
+      <div class="field slider-field">
+        <span class="field-label">Humidity <em>(%)</em></span>
+        <input type="range" id="humidity_percent" min="30" max="100" step="1" value="70">
+        <output class="readout" id="out_humidity_percent">70%</output>
+      </div>
+
+      <div class="field slider-field">
+        <span class="field-label">Temperature <em>(°C)</em></span>
+        <input type="range" id="temperature_c" min="14" max="42" step="0.5" value="29">
+        <output class="readout" id="out_temperature_c">29.0°C</output>
+      </div>
+
+      <div class="field slider-field">
+        <span class="field-label">Continuous rain-days</span>
+        <input type="range" id="days_continuous_rainfall" min="0" max="20" step="1" value="3">
+        <output class="readout" id="out_days_continuous_rainfall">3</output>
+      </div>
+
+      <div class="field slider-field">
+        <span class="field-label">River discharge <em>(cumecs)</em></span>
+        <input type="range" id="river_discharge_cumecs" min="200" max="12000" step="50" value="2500">
+        <output class="readout" id="out_river_discharge_cumecs">2500</output>
+      </div>
+    </div>
+
+    <button id="analyzeBtn" class="analyze-btn">
+      <span>Run flood risk analysis</span>
+      <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <div class="preset-row">
+      <span class="preset-label">Quick scenarios:</span>
+      <button class="preset" data-preset="calm">Calm season</button>
+      <button class="preset" data-preset="monsoon">Active monsoon</button>
+      <button class="preset" data-preset="severe">Severe storm</button>
+    </div>
+  </section>
+
+  <!-- GAUGE / RESULT PANEL -->
+  <section class="panel result-panel" aria-labelledby="resultHeading">
+    <div class="panel-head">
+      <span class="eyebrow">Stage gauge</span>
+      <h2 id="resultHeading">Predicted flood risk</h2>
+    </div>
+
+    <div class="gauge-wrap">
+      <div class="gauge-post" id="gaugePost">
+        <div class="gauge-ticks" id="gaugeTicks"></div>
+        <div class="gauge-fill" id="gaugeFill">
+          <div class="gauge-wave"></div>
+        </div>
+        <div class="gauge-marker" id="gaugeMarker"></div>
+      </div>
+      <div class="gauge-readout">
+        <div class="risk-percent" id="riskPercent">—</div>
+        <div class="risk-band" id="riskBand">Awaiting reading</div>
+        <p class="advisory" id="advisory">Enter station data and run the analysis to classify flood risk for this region.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<section class="benchmark">
+  <div class="panel-head">
+    <span class="eyebrow">Model validation</span>
+    <h2>Benchmark on held-out test data</h2>
+  </div>
+  <div class="bench-table-wrap">
+    <table class="bench-table" id="benchTable">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Accuracy</th>
+          <th>Precision</th>
+          <th>Recall</th>
+          <th>F1</th>
+          <th>ROC&nbsp;AUC</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for name, m in results.items() %}
+        <tr {% if name == model_name %}class="best-row"{% endif %}>
+          <td>{{ name }}{% if name == model_name %} <span class="best-tag">selected</span>{% endif %}</td>
+          <td class="mono">{{ m.accuracy }}%</td>
+          <td class="mono">{{ m.precision }}%</td>
+          <td class="mono">{{ m.recall }}%</td>
+          <td class="mono">{{ m.f1_score }}%</td>
+          <td class="mono">{{ m.roc_auc }}%</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if not xgboost_available %}
+  <p class="note">Note: the <code>xgboost</code> package wasn't available when this instance trained, so XGBoost's row was produced by a sklearn GradientBoosting fallback with equivalent hyperparameters. Install <code>xgboost</code> and re-run <code>train_model.py</code> for the genuine algorithm.</p>
+  {% endif %}
+</section>
+
+<footer class="foot">
+  <p>Rising Waters — built for early flood warning, evacuation planning, and disaster resource allocation. Designed for deployment on IBM Cloud.</p>
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

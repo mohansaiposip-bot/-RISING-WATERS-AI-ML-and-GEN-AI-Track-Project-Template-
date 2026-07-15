@@ -1,0 +1,11 @@
+# IBM Cloud Cloud Foundry deployment manifest.
+# Deploy with: ibmcloud cf push
+applications:
+  - name: rising-waters
+    memory: 256M
+    instances: 1
+    buildpacks:
+      - python_buildpack
+    command: gunicorn app:app --bind 0.0.0.0:$PORT
+    env:
+      FLASK_ENV: production

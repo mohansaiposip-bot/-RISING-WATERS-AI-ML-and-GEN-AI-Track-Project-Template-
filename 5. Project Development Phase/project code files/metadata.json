@@ -1,0 +1,84 @@
+{
+  "best_model": "XGBoost (fallback: GradientBoosting)",
+  "needs_scaling": false,
+  "features": [
+    "annual_rainfall_mm",
+    "seasonal_rainfall_mm",
+    "cloud_visibility_km",
+    "humidity_percent",
+    "temperature_c",
+    "days_continuous_rainfall",
+    "river_discharge_cumecs"
+  ],
+  "results": {
+    "Decision Tree": {
+      "accuracy": 87.67,
+      "precision": 88.09,
+      "recall": 84.57,
+      "f1_score": 86.3,
+      "roc_auc": 93.16,
+      "confusion_matrix": [
+        [
+          586,
+          63
+        ],
+        [
+          85,
+          466
+        ]
+      ]
+    },
+    "Random Forest": {
+      "accuracy": 89.83,
+      "precision": 90.55,
+      "recall": 86.93,
+      "f1_score": 88.7,
+      "roc_auc": 96.54,
+      "confusion_matrix": [
+        [
+          599,
+          50
+        ],
+        [
+          72,
+          479
+        ]
+      ]
+    },
+    "KNN": {
+      "accuracy": 89.75,
+      "precision": 90.38,
+      "recall": 86.93,
+      "f1_score": 88.62,
+      "roc_auc": 96.22,
+      "confusion_matrix": [
+        [
+          598,
+          51
+        ],
+        [
+          72,
+          479
+        ]
+      ]
+    },
+    "XGBoost (fallback: GradientBoosting)": {
+      "accuracy": 90.0,
+      "precision": 90.89,
+      "recall": 86.93,
+      "f1_score": 88.87,
+      "roc_auc": 96.6,
+      "confusion_matrix": [
+        [
+          601,
+          48
+        ],
+        [
+          72,
+          479
+        ]
+      ]
+    }
+  },
+  "xgboost_available": false
+}
